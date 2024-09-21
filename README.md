@@ -1,6 +1,6 @@
 # qoiconverter
 
-QOI to .ppm Converter for Linux
+.qoi to .ppm Converter for Linux
 
 # How to build:
 

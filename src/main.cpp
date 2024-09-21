@@ -1,4 +1,3 @@
-//#include "../include/converter/task.hpp"
 #include "converter/converter.hpp"
 #include "converter/utils.hpp"
 #include <cassert>
@@ -26,10 +25,13 @@
 #include <variant>
 #include <array>
 #include <future>
+#include <filesystem>
+#include <chrono>
 
 
 using namespace converter;
 void func(const std::string& qoifile,const std::string& ppmdest){
+  auto start = std::chrono::high_resolution_clock::now();
   netpbm::pbmwriter pbmw;
   qoi::qoireader qoir;
   qoir.open(qoifile);
@@ -37,22 +39,90 @@ void func(const std::string& qoifile,const std::string& ppmdest){
     auto g = qoir.get_rgba32();
     pbmw.open(ppmdest,std::move(g));
     if(pbmw.write_rgba32_to_p6()==0){
-      std::cout << "SUCCESS" << std::endl;
+      auto end = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double, std::milli> elapsed = end - start;
+      std::cout << "FILE:"<< qoifile << " TO " << ppmdest << " TOTAL TIME: "<< elapsed.count() << std::endl;
+    }else{
+      std::cout << "FILE:"<< qoifile << " TO " << ppmdest << " FAILURE" << std::endl;
+    }
+  }
+}
+
+int main(int argc, char* argv[]){
+if (argc < 2 || argc > 3){
+  std::cout << "Incorrect Input";
+  return -1;
+}
+
+if(argc==2){
+  std::filesystem::path path = argv[1];
+    std::cout << path.string() << std::endl;
+
+  if(!std::filesystem::exists(path)){
+    std::cout << "Incorrect path" << std::endl;
+    return -1;
+  }
+
+  if(std::filesystem::is_directory(path)){
+    //auto start = std::chrono::high_resolution_clock::now();
+    std::vector<std::future<void>> results;
+    results.reserve(10);
+    for(const auto& e : std::filesystem::directory_iterator(path)){
+      std::string filename = e.path().string();
+      if(e.path().extension() == ".qoi"){
+        results.emplace_back(std::async(std::launch::async,func,filename,
+                                        (e.path().parent_path()/e.path().stem()).string()+".ppm"));
+      }
     }
   }
 
+
 }
 
-int main(){
+return 0;
+ }
 
-  utils::timer timea;
-  timea.set();
 
-  std::future<void> result = std::async(std::launch::async,func,"./sun.qoi","./sun.ppm");
 
-  result.get();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  utils::timer timea;
+//  timea.set();
+
+//  std::future<void> result = std::async(std::launch::async,func,"./sun.qoi","./sun.ppm");
+
+//  result.get();
   //result2.get();
-  std::cout << *timea.get() << std::endl;
+//  std::cout << *timea.get() << std::endl;
   //auto he=test.get_header();
   //he.print();
   //auto g = test.get_rgba32();
@@ -96,7 +166,3 @@ std::cout << endt.value() << std::endl;
 test.close();
 writer.close();
 */
-}
-
-
-

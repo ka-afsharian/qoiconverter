@@ -353,7 +353,7 @@ struct pbmreader::pixel_data_to_P6_visit{
     P6_pixel_data temp{data.height_,data.width_,255};
     size_t length = temp.height_*temp.width_;
     temp.data_.reserve(length);
-    double scale_factor = 255.0/data.max_val_;
+    double scale_factor = 255.0/static_cast<double>(data.max_val_);
     for(auto& e : data.data_){
       uint8_t valuered = static_cast<uint8_t>(e.red*scale_factor);
       uint8_t valuegreen = static_cast<uint8_t>(e.green*scale_factor);
@@ -368,7 +368,7 @@ struct pbmreader::pixel_data_to_P6_visit{
     size_t length = temp.height_*temp.width_;
     temp.data_.reserve(length);
     for(auto& e : data.data_){
-      uint8_t value = static_cast<uint8_t>(255*static_cast<double>(e.grey)/data.max_val_);
+      uint8_t value = static_cast<uint8_t>(255*static_cast<double>(e.grey)/static_cast<double>(data.max_val_));
       temp.data_.emplace_back(value,value,value);
     }
     return {std::move(headertemp),std::move(temp)};
@@ -390,9 +390,9 @@ struct pbmreader::pixel_data_to_P6_visit{
     size_t length = temp.height_*temp.width_;
     temp.data_.reserve(length);
     for(auto& e : data.data_){
-      uint8_t valuered = static_cast<uint8_t>(255*static_cast<double>(stoul(e.red))/data.max_val_);
-      uint8_t valuegreen = static_cast<uint8_t>(255*static_cast<double>(stoul(e.green))/data.max_val_);
-      uint8_t valueblue = static_cast<uint8_t>(255*static_cast<double>(stoul(e.blue))/data.max_val_);
+      uint8_t valuered = static_cast<uint8_t>(255*static_cast<double>(stoul(e.red))/static_cast<double>(data.max_val_));
+      uint8_t valuegreen = static_cast<uint8_t>(255*static_cast<double>(stoul(e.green))/static_cast<double>(data.max_val_));
+      uint8_t valueblue = static_cast<uint8_t>(255*static_cast<double>(stoul(e.blue))/static_cast<double>(data.max_val_));
       temp.data_.emplace_back(valuered,valuegreen,valueblue);
     }
     return {std::move(headertemp),std::move(temp)};
@@ -405,7 +405,7 @@ struct pbmreader::pixel_data_to_P6_visit{
     temp.data_.reserve(length);
     double scale_factor = 255.0/static_cast<double>(data.max_val_);
     for(auto& e : data.data_){
-      uint8_t valuegrey = static_cast<uint8_t>(stoul(e.grey)*scale_factor);
+      uint8_t valuegrey = static_cast<uint8_t>(static_cast<double>(stoul(e.grey))*scale_factor);
       temp.data_.emplace_back(valuegrey,valuegrey,valuegrey);
     }
     return {std::move(headertemp),std::move(temp)};
@@ -444,7 +444,7 @@ struct pbmreader::pixel_data_to_rgba32_visit{
   converter::pixbuff::rgba32 operator()(P6_pixel_data& data ){
     converter::pixbuff::rgba32 temp(data.width_,data.height_);
     //size_t length = data.height_*data.width_;
-    double scale_factor = 255.0/data.max_val_;
+    double scale_factor = 255.0/static_cast<double>(data.max_val_);
     for(auto& e : data.data_){
       uint8_t valuered = static_cast<uint8_t>(e.red*scale_factor);
       uint8_t valuegreen = static_cast<uint8_t>(e.green*scale_factor);
@@ -457,7 +457,7 @@ struct pbmreader::pixel_data_to_rgba32_visit{
   converter::pixbuff::rgba32 operator()(const P5_pixel_data& data ){
     converter::pixbuff::rgba32 temp(data.width_,data.height_);
     //size_t length = data.height_*data.width_;
-    double scale_factor = 255.0/data.max_val_;
+    double scale_factor = 255.0/static_cast<double>(data.max_val_);
     for(auto& e : data.data_){
       uint8_t value = static_cast<uint8_t>(e.grey*scale_factor);
       temp.emplace_back(value,value,value,0);
@@ -487,11 +487,11 @@ struct pbmreader::pixel_data_to_rgba32_visit{
   converter::pixbuff::rgba32 operator()(P3_pixel_data& data ){
     converter::pixbuff::rgba32 temp(data.width_,data.height_);
     //size_t length = data.height_*data.width_;
-    double scale_factor = 255.0/data.max_val_;
+    double scale_factor = 255.0/static_cast<double>(data.max_val_);
     for(auto& e : data.data_){
-      uint8_t valuered = static_cast<uint8_t>(stoul(e.red)*scale_factor);
-      uint8_t valuegreen = static_cast<uint8_t>(stoul(e.green)*scale_factor);
-      uint8_t valueblue = static_cast<uint8_t>(stoul(e.blue)*scale_factor);
+      uint8_t valuered = static_cast<uint8_t>(static_cast<double>(stoul(e.red))*scale_factor);
+      uint8_t valuegreen = static_cast<uint8_t>(static_cast<double>(stoul(e.green))*scale_factor);
+      uint8_t valueblue = static_cast<uint8_t>(static_cast<double>(stoul(e.blue))*scale_factor);
       temp.emplace_back(valuered,valuegreen,valueblue,0);
     }
     return temp;
@@ -500,9 +500,9 @@ struct pbmreader::pixel_data_to_rgba32_visit{
   converter::pixbuff::rgba32 operator()(const P2_pixel_data& data ){
     converter::pixbuff::rgba32 temp(data.width_,data.height_);
     //size_t length = data.height_*data.width_;
-    double scale_factor = 255.0/data.max_val_;
+    double scale_factor = 255.0/static_cast<double>(data.max_val_);
     for(auto& e : data.data_){
-      uint8_t valuegrey = static_cast<uint8_t>(stoul(e.grey)*scale_factor);
+      uint8_t valuegrey = static_cast<uint8_t>(static_cast<double>(stoul(e.grey))*scale_factor);
       temp.emplace_back(valuegrey,valuegrey,valuegrey,0);
     }
     return temp;

@@ -107,7 +107,7 @@ size_t qoireader::get_data_size(){
   if(!is_read_header_){
     return 0;
   }
-  return get_file_size() - data_offset_ - 8; //-1 because last byte is end of file mark
+  return get_file_size() - data_offset_ - 8; //-8 because last byte is end of file mark
 }
 
 
