@@ -2,50 +2,26 @@
 #include "converter/utils.hpp"
 #include <cassert>
 #include <string>
-#include <limits>
 #include <iostream>
 #include <thread>
 #include <vector>
-#include <optional>
-#include <experimental/net>
-#include <experimental/netfwd>
-#include <ranges>
-#include <algorithm>
 #include <chrono>
-#include <numeric>
-#include <coroutine>
-#include <x86intrin.h>
-#include <array>
-#include <random>
-#include <algorithm>
-#include <termios.h>
-#include <unistd.h>
-#include <streambuf>
-#include <ostream>
-#include <variant>
-#include <array>
 #include <future>
 #include <filesystem>
-#include <chrono>
 
 
 using namespace converter;
-void func(const std::string& qoifile,const std::string& ppmdest){
-  auto start = std::chrono::high_resolution_clock::now();
+int func(const std::string& qoifile,const std::string& ppmdest){
+  //auto start = std::chrono::high_resolution_clock::now();
   netpbm::pbmwriter pbmw;
   qoi::qoireader qoir;
   qoir.open(qoifile);
   if(qoir.read()==0){
     auto g = qoir.get_rgba32();
     pbmw.open(ppmdest,std::move(g));
-    if(pbmw.write_rgba32_to_p6()==0){
-      auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> elapsed = end - start;
-      std::cout << "FILE:"<< qoifile << " TO " << ppmdest << " TOTAL TIME: "<< elapsed.count() << std::endl;
-    }else{
-      std::cout << "FILE:"<< qoifile << " TO " << ppmdest << " FAILURE" << std::endl;
-    }
+    return pbmw.write_rgba32_to_p6();
   }
+  return -1;
 }
 
 int main(int argc, char* argv[]){
@@ -65,8 +41,8 @@ if(argc==2){
 
   if(std::filesystem::is_directory(path)){
     //auto start = std::chrono::high_resolution_clock::now();
-    std::vector<std::future<void>> results;
-    results.reserve(10);
+    std::vector<std::future<int>> results;
+    results.reserve(8);//max 8 threads
     for(const auto& e : std::filesystem::directory_iterator(path)){
       std::string filename = e.path().string();
       if(e.path().extension() == ".qoi"){
@@ -74,6 +50,8 @@ if(argc==2){
                                         (e.path().parent_path()/e.path().stem()).string()+".ppm"));
       }
     }
+
+
   }
 
 

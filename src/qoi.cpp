@@ -251,9 +251,9 @@ int qoireader::decompress(){
         } catch (const std::out_of_range& ex){ picture_={};return -1;}
       drmdg = static_cast<int>((val & 0b11110000) >> 4) - 8;
       dbmdg = static_cast<int>(val & 0b00001111) - 8;
-      previous_pixel[0] += diffgreen + drmdg; //curpxr = drmdg +diffgreen + prevpxr
-      previous_pixel[1] += diffgreen;
-      previous_pixel[2] += diffgreen + dbmdg; //curpxb = dbmdg + diffgreen + prevpxb
+      previous_pixel[0] = static_cast<uint8_t>(previous_pixel[0] + diffgreen + drmdg); //curpxr = drmdg +diffgreen + prevpxr
+      previous_pixel[1] = static_cast<uint8_t>(previous_pixel[1] + diffgreen);
+      previous_pixel[2] = static_cast<uint8_t>(previous_pixel[2] + diffgreen + dbmdg); //curpxb = dbmdg + diffgreen + prevpxb
       //alpha no change
       arr[pixhash(previous_pixel)]=previous_pixel;
       picture_.emplace_back(previous_pixel[0],previous_pixel[1],previous_pixel[2],previous_pixel[3]);
@@ -263,9 +263,9 @@ int qoireader::decompress(){
       dr = static_cast<int>((val & 0b00110000) >> 4) - 2;
       dg = static_cast<int>((val & 0b00001100) >> 2) - 2;
       db = static_cast<int>(val & 0b00000011) - 2;
-      previous_pixel[0] += dr;
-      previous_pixel[1] += dg;
-      previous_pixel[2] += db;
+      previous_pixel[0] = static_cast<uint8_t>(previous_pixel[0] + dr);
+      previous_pixel[1] = static_cast<uint8_t>(previous_pixel[1] + dg);
+      previous_pixel[2] = static_cast<uint8_t>(previous_pixel[2] + db);
       //alpha no change
       arr[pixhash(previous_pixel)]=previous_pixel;
       picture_.emplace_back(previous_pixel[0],previous_pixel[1],previous_pixel[2],previous_pixel[3]);
@@ -274,13 +274,9 @@ int qoireader::decompress(){
     case qoi_op::rgb:
       try{
         val = compressed_data_.at(i+1); //if there is no data after i then file is incorrect
-        } catch (const std::out_of_range& ex){ picture_={};return -1;}
-      previous_pixel[0] = val;
-      try{
+        previous_pixel[0] = val;
         val = compressed_data_.at(i+2); //if there is no data after 2 then file is incorrect
-        } catch (const std::out_of_range& ex){ picture_={};return -1;}
-      previous_pixel[1] = val;
-      try{
+        previous_pixel[1] = val;
         val = compressed_data_.at(i+3); //if there is no data after 3 then file is incorrect
         } catch (const std::out_of_range& ex){ picture_={};return -1;}
       previous_pixel[2] = val;
@@ -291,17 +287,11 @@ int qoireader::decompress(){
     case qoi_op::rgba:
       try{
         val = compressed_data_.at(i+1); //if there is no data after 1 then file is incorrect
-        } catch (const std::out_of_range& ex){ picture_={};return -1;}
-      previous_pixel[0] = val;
-      try{
+        previous_pixel[0] = val;
         val = compressed_data_.at(i+2); //if there is no data after 2 then file is incorrect
-        } catch (const std::out_of_range& ex){ picture_={};return -1;}
-      previous_pixel[1] = val;
-      try{
+        previous_pixel[1] = val;
         val = compressed_data_.at(i+3); //if there is no data after 3 then file is incorrect
-        } catch (const std::out_of_range& ex){ picture_={}; return -1;}
-      previous_pixel[2] = val;
-      try{
+        previous_pixel[2] = val;
         val = compressed_data_.at(i+4); //if there is no data after 4 then file is incorrect
         } catch (const std::out_of_range& ex){ picture_={}; return -1;}
       previous_pixel[3] = val;
