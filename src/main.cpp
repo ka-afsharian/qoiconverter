@@ -40,25 +40,29 @@ if(argc==2){
   }
 
   if(std::filesystem::is_directory(path)){
-    //auto start = std::chrono::high_resolution_clock::now();
     std::vector<std::future<int>> results;
-    results.reserve(8);//max 8 threads
-    for(const auto& e : std::filesystem::directory_iterator(path)){
+    results.reserve(std::thread::hardware_concurrency());
+    for(const auto& e : std::filesystem::directory_iterator(path)){//maybe sort by file size before iterating
       std::string filename = e.path().string();
       if(e.path().extension() == ".qoi"){
         results.emplace_back(std::async(std::launch::async,func,filename,
                                         (e.path().parent_path()/e.path().stem()).string()+".ppm"));
       }
     }
-
-
+    int i =0;
+    for(auto& e : results){
+      if(e.get()==-1)
+        i++;
+    }
+    std::cout << i << " ERROR(S)" << std::endl;
+  }else{
+    if(func(path.string(),(path.parent_path()/path.stem()).string()+".ppm")==-1){
+    std::cout <<"ERROR" << std::endl;
+    }
   }
-
-
-}
-
-return 0;
  }
+ return 0;
+}
 
 
 

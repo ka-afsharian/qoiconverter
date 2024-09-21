@@ -143,7 +143,6 @@ int pbmreader::read_data(){
       return -1;
     }
   }else{
-    //write for other cases later
     return -1;
   }
 
