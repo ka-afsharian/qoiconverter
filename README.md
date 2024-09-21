@@ -5,10 +5,10 @@
 # How to build:
 
     install gcc
-      On Fedora: sudo dnf install gcc
+        On Fedora: sudo dnf install gcc
 
     install cmake
-      On Fedora: sudo dnf install cmake
+        On Fedora: sudo dnf install cmake
 
     chmod +x compile.sh
 
@@ -16,5 +16,7 @@
 
 # How to run program:
 
-    ./bin/run <source_path> <destination_path>
+    To convert all <file>.qoi images in source directory to <file>.ppm in source directory:
+        ./bin/qoiconv <source_directory>
+        
 

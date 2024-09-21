@@ -26,7 +26,7 @@ target_include_directories(qoireader
 
 
 set_target_properties(qoireader PROPERTIES
-    OUTPUT_NAME "run"
+    OUTPUT_NAME "qoiconv"
 )
 
 set_target_properties( PROPERTIES VERSION 1.0 SOVERSION 1)

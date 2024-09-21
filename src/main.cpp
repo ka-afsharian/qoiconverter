@@ -12,7 +12,6 @@
 
 using namespace converter;
 int func(const std::string& qoifile,const std::string& ppmdest){
-  //auto start = std::chrono::high_resolution_clock::now();
   netpbm::pbmwriter pbmw;
   qoi::qoireader qoir;
   qoir.open(qoifile);
@@ -25,8 +24,9 @@ int func(const std::string& qoifile,const std::string& ppmdest){
 }
 
 int main(int argc, char* argv[]){
+auto start = std::chrono::high_resolution_clock::now();
 if (argc < 2 || argc > 3){
-  std::cout << "Incorrect Input";
+  std::cout << "Incorrect number of arguments" << std::endl;
   return -1;
 }
 
@@ -61,6 +61,9 @@ if(argc==2){
     }
   }
  }
+ auto end = std::chrono::high_resolution_clock::now();
+ std::chrono::duration<double,std::milli> total = end - start;
+ std::cout << "Total time: " << total.count() << "ms" << std::endl;
  return 0;
 }
 
