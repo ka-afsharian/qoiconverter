@@ -23,6 +23,10 @@ int func(const std::string& qoifile,const std::string& ppmdest){
   return -1;
 }
 
+bool compare_file_size(const std::filesystem::directory_entry& a, const std::filesystem::directory_entry& b){
+  return std::filesystem::file_size(a) > std::filesystem::file_size(b);
+}
+
 int main(int argc, char* argv[]){
 auto start = std::chrono::high_resolution_clock::now();
 if (argc < 2 || argc > 3){
@@ -41,13 +45,22 @@ if(argc==2){
 
   if(std::filesystem::is_directory(path)){
     std::vector<std::future<int>> results;
+    std::vector<std::filesystem::directory_entry> entries{std::filesystem::directory_iterator(path),
+                                                          std::filesystem::directory_iterator()};
+
+    entries.erase(std::remove_if(entries.begin(),entries.end(),[](const auto& e){ return e.path().extension() != ".qoi";}),
+                   entries.end());
+    std::sort(entries.begin(),entries.end(), compare_file_size);
+
+    for(auto e : entries){
+      std::cout << e.path().string() << std::endl;
+    }
+
     results.reserve(std::thread::hardware_concurrency());
-    for(const auto& e : std::filesystem::directory_iterator(path)){//maybe sort by file size before iterating
+    for(const auto& e : entries){//maybe sort by file size before iterating
       std::string filename = e.path().string();
-      if(e.path().extension() == ".qoi"){
         results.emplace_back(std::async(std::launch::async,func,filename,
                                         (e.path().parent_path()/e.path().stem()).string()+".ppm"));
-      }
     }
     int i =0;
     for(auto& e : results){
