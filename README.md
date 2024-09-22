@@ -1,6 +1,7 @@
 # qoiconverter
 
 .qoi to .ppm Converter for Linux
+
 Converts multiple files in parallel using std::async
 
 # How to build:

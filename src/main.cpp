@@ -48,8 +48,9 @@ if(argc==2){
     std::vector<std::filesystem::directory_entry> entries{std::filesystem::directory_iterator(path),
                                                           std::filesystem::directory_iterator()};
 
-    entries.erase(std::remove_if(entries.begin(),entries.end(),[](const auto& e){ return e.path().extension() != ".qoi";}),
-                   entries.end());
+    entries.erase(std::remove_if(entries.begin(),entries.end(),[](const auto& e){
+      return e.path().extension() != ".qoi" || !std::filesystem::is_regular_file(e);}),
+      entries.end());
     std::sort(entries.begin(),entries.end(), compare_file_size);
 
     for(auto e : entries){
